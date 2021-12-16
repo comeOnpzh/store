@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace要绑定一个对应的dao/Mapper接口，相当于实现这个接口-->
+<mapper namespace="com.example.store.mapper.UserMapper">
+
+<!--    自定义字段和对象属性映射标志，resultMap
+        id表示这个映射关系的id，可以通过这个id使用这个映射关系
+        type表示映射的实体类（全类名）
+-->
+    <resultMap id="userMap" type="com.example.store.entity.User">
+<!--        在定义映射规则时主键是不可省略的
+            column表示表中的字段
+            property表示实体类中对应的属性
+-->
+        <id column="uid" property="uid"></id>
+        <result column="created_time" property="createdTime"></result>
+        <result column="created_user" property="createdUser"></result>
+        <result column="modified_time" property="modifiedTime"></result>
+        <result column="modified_user" property="modifiedUser"></result>
+        <result column="user_status" property="userStatus"></result>
+    </resultMap>
+    <!--select查询语句，这相当于实现了接口里面和id相同方法名的这个方法-->
+<!--
+        useGeneratedKeys     开启指定字段的值自增
+        keyProperty               要自增的字段
+        -->
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="uid" >
+        insert
+        into
+        t_user(username,password,salt,phone,email,gender,avatar,user_status,created_user,created_time,modified_user,modified_time)
+        values (
+        #{username},
+        #{password},
+        #{salt},
+        #{phone},
+        #{email},
+        #{gender},
+        #{avatar},
+        #{userStatus},
+        #{createdUser},
+        #{createdTime},
+        #{modifiedUser},
+        #{modifiedTime}
+        )
+    </insert>
+    <!--
+    resultType表示查询的结果集类型，只需要指定映射类的类型，需要写完类路径下的所有包名(当数据库字段和类的属性名不一致时，使用resultType会报错
+    reultMap
+    -->
+    <select id="isExitUser" resultMap="userMap">
+        select *from t_user where username = #{username}
+    </select>
+
+    <update id="changePassword">
+        update t_user set password = #{newPassword},modified_user = #{modifiedUser},modified_time=#{modifiedTime} where uid = #{uid}
+    </update>
+    <select id="getUserInfoByUid" resultMap="userMap">
+        select  *from t_user where uid = #{uid}
+    </select>
+
+    <update id="updateUserInfo">
+        update t_user set
+            <!--if标签是mybatis提供的，test里面的为if的条件-->
+            <if test="phone!=null">
+                phone = #{phone},
+            </if>
+            <if test="gender!=null">
+                gender = #{gender},
+            </if>
+            <if test="email!=null">
+                email =#{email},
+            </if>
+              modified_user = #{modifiedUser},
+              modified_time=#{modifiedTime}
+        where uid = #{uid};
+
+    </update>
+    <update id="upLoadAvatar">
+        update current_user set
+        avatar = #{avatar},
+        modified_user = #{modifiedUser},
+        modified_time=#{modifiedTime}
+        where uid = #{uid}
+    </update>
+</mapper>
