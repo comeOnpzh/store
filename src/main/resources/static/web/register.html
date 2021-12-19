@@ -152,6 +152,7 @@
 				success:function (returnData) {
 					if(returnData.state==200){
 						alert("恭喜你，注册成功了,3秒后即将跳转登录页面！");
+						location.href = "login.html";
 					}else{
 						alert("很遗憾，注册失败了！"+returnData.message);
 					}

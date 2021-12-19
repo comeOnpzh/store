@@ -78,10 +78,11 @@
 
     </update>
     <update id="upLoadAvatar">
-        update current_user set
+        update t_user set
         avatar = #{avatar},
         modified_user = #{modifiedUser},
         modified_time=#{modifiedTime}
         where uid = #{uid}
     </update>
+
 </mapper>

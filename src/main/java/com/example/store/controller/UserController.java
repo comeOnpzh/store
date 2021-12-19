@@ -30,14 +30,7 @@ import java.util.UUID;
 @RestController           //这个注解表示这个类放回到前端的数据将会是json格式
 @RequestMapping("user")          //这个注解表示这个类将会捕获以user为路径的请求
 public class UserController extends BaseController {
-    public static final int AVATAR_MAX_SIZE = 10*1024*1024;
-    public static final List<String> AVATAR_TYPE  = new ArrayList<>();
-    static {
-        AVATAR_TYPE.add("images/jpeg");
-        AVATAR_TYPE.add("images/png");
-        AVATAR_TYPE.add("images/bmp");
-        AVATAR_TYPE.add("images/gif");
-    }
+
     @Autowired
     private IUserService userService;
 
@@ -81,6 +74,14 @@ public class UserController extends BaseController {
         return new JsonUtil<>(OK,user);
     }
 
+    public static final int AVATAR_MAX_SIZE = 10*1024*1024;
+    public static final List<String> AVATAR_TYPE  = new ArrayList<>();
+    static {
+        AVATAR_TYPE.add("image/jpeg");
+        AVATAR_TYPE.add("image/png");
+        AVATAR_TYPE.add("image/bmp");
+        AVATAR_TYPE.add("image/gif");
+    }
     /**
      *
      * @param session
@@ -88,6 +89,7 @@ public class UserController extends BaseController {
      *                  也整合了这个类，只需要在参数列表里面声明一个MultipartFile就可以使用，可以配合@RequestParam注解使用
      * @return
      */
+    @RequestMapping("change_avatar")
     public JsonUtil<String> uploadAvatar(HttpSession session, @RequestParam("file") MultipartFile file){
         //判断文件是否为空
         if(file.isEmpty()){
@@ -108,13 +110,14 @@ public class UserController extends BaseController {
         if(!dir.exists()){          //判断目录名是否已经存在
             dir.mkdirs();                //创建该目录
         }
+
         String originalFilename = file.getOriginalFilename();   //这个方法可以获取到一个文件名+文件后缀的字符串
         //保存文件后缀并且生成一个随机文件
         int index = originalFilename.lastIndexOf(".");//获取到.的位置
         String suffix = originalFilename.substring(index);//获取文件的后缀，subString可以返回index到最后的字符（包括index）
         String randomFileName = UUID.randomUUID().toString().toUpperCase();     //获取到随机文件名
         //将随机文件名和文件后缀进行拼接
-        String newFileName = suffix + randomFileName;
+        String newFileName = randomFileName + suffix;
         //生成一个空的文件
         File dest = new File(dir, newFileName);
         //将参数中获取到的文件写入dest中
@@ -126,6 +129,8 @@ public class UserController extends BaseController {
         //将文件路径保存到数据库中
         String avatar = "/upload/"+newFileName;
         Integer uid = getUidFromSession(session);
-        return null;
+        String userName = getUserNameFromSession(session);
+        userService.uploadUserAvatar(uid,avatar,userName);
+        return new JsonUtil<>(OK,avatar);
     }
 }

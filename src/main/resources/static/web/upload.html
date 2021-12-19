@@ -13,6 +13,7 @@
 		<link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
 		<script src="../bootstrap3/jquery-1.9.1.min.js"></script>
 		<script src="../bootstrap3/js/bootstrap.js"></script>
+		<script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
 		<!-- 字体图标 -->
 		<link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
 		<link rel="stylesheet" type="text/css" href="../css/layout.css" />
@@ -136,7 +137,8 @@
 					</ul>
 					<div class="panel-body">
 						<!--上传头像表单开始-->
-						<form class="form-horizontal" role="form">
+<!--						因为上传的文件可能比较大，所以需要指定提交method为post，指定enctype是为了防止上传的文件被分割-->
+						<form class="form-horizontal" role="form" id="form-change-avatar">
 							<div class="form-group">
 								<label class="col-md-2 control-label">选择头像:</label>
 								<div class="col-md-5">
@@ -149,7 +151,7 @@
 							</div>
 							<div class="form-group">
 								<div class="col-sm-offset-2 col-sm-10">
-									<input type="submit" class="btn btn-primary" value="上传" />
+									<input class="btn btn-primary" type="button" id="upload_btn" value="上传"/>
 								</div>
 							</div>
 						</form>
@@ -231,17 +233,46 @@
 						<img src="../images/index/ios.png" class="lf">
 						<img src="../images/index/android.png" alt="" class="lf" />
 					</div>
-					<div class="col-md-6">
-						<img src="../images/index/erweima.png">
-					</div>
 				</div>
 			</div>
 			<!-- 页面底部-备案号 #footer -->
 			<div class="col-md-12 text-center bottom">
-				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="http://www.dnsc.cn/">圆心科技集团有限公司</a> 版权所有
+				Copyright © 2022 dnsc.cn All Rights Reserved 粤ICP备08963888号-45 <a target="_blank" href="#"></a> 版权所有
 			</div>
 		</footer>
 		<!--页脚结束-->
+	<script>
+		$(document).ready(function () {
+			let avatar = $.cookie("avatar");
+			$('#img-avatar').attr('src',avatar);
+		});
+		$('#upload_btn').click(function (){
+			$.ajax({
+				url:"/user/change_avatar",
+				type:"POST",
+				data:new FormData($('#form-change-avatar')[0]),
+				dataType:"JSON",
+				processData:false,            //处理数据的形式，ajax默认是通过串来处理，所以要设成false
+				contentType:false,            //提交数据的形式，ajax默认是通过串来处理，所以要设成false
+				success:function (data){
+					if(data.state==200){
+						alert("头像上传成功！");
+						let afterUpload = data.data;           //获取更新之后的头像地址
+						console.log(afterUpload);
+						$.cookie("avatar",afterUpload,{expires: 7});         //设置到cookie中
+						location.href = 'upload.html'
+					}else{
+						alert(data.message);
+					}
+				},
+				error:function (xhr) {
+					alert(xhr.message);
+				}
+			})
+		});
+		//
+
+	</script>
 	</body>
 
 </html>
