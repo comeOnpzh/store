@@ -19,12 +19,9 @@ class StoreApplicationTests {
     private IUserService userService;
     @Test
     void contextLoads() throws Exception{
-        System.out.println(dataSource.getConnection());
-        User user = new User();
-        user.setUsername("hello");
-        user.setPassword("123456");
-        user.setAvatar("jfaksjfkajs");
-        userService.register(user);
+        String a = "afajfasj";
+        String substring = a.substring(2,4);
+        System.out.println(substring);
     }
 
 }

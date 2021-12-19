@@ -1,5 +1,6 @@
 package com.example.store.service.impl;
 
+import com.example.store.controller.ex.FileUpLoadIOException;
 import com.example.store.entity.User;
 import com.example.store.mapper.UserMapper;
 import com.example.store.service.IUserService;
@@ -105,10 +106,8 @@ public class UserServiceImpl implements IUserService {
 
     /**
      *更新用户信息
-     * @param uid
-     * @param phone   电话号码
-     * @param gender    性别
-     * @param email       邮箱
+     * @param updateUser
+     *
      */
     @Override
     public void updateUserInfo(User updateUser) {
@@ -128,6 +127,15 @@ public class UserServiceImpl implements IUserService {
             throw new NoSuchUserNameException("用户不存在或者已经注销，请重新注册或者联系管理员");
         }
         return resUser;
+    }
+
+    //上传用户头像
+    @Override
+    public void uploadUserAvatar(Integer uid, String avatar, String userName) {
+        Integer row = userMapper.upLoadAvatar(uid, avatar, userName, new Date());
+        if(row!=1){
+            throw new FileUpLoadIOException("用户头像上传出错，请联系管理员处理");
+        }
     }
 
 

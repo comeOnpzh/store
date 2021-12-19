@@ -3,6 +3,7 @@ package com.example.store.controller;
 import com.example.store.controller.ex.FileEmptyException;
 import com.example.store.controller.ex.FileSizeException;
 import com.example.store.controller.ex.FileTypeException;
+import com.example.store.controller.ex.FileUpLoadIOException;
 import com.example.store.entity.BaseEntity;
 import com.example.store.entity.User;
 import com.example.store.service.IUserService;
@@ -17,8 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by pengzh5 Cotter on 2021/12/5.
@@ -100,10 +103,29 @@ public class UserController extends BaseController {
         }
         //文件正常
         String parent = session.getServletContext().getRealPath("upload");
+        System.out.println(parent);
         File dir = new File(parent);       //将一个file对象指向这个路径
         if(!dir.exists()){          //判断目录名是否已经存在
             dir.mkdirs();                //创建该目录
         }
-
+        String originalFilename = file.getOriginalFilename();   //这个方法可以获取到一个文件名+文件后缀的字符串
+        //保存文件后缀并且生成一个随机文件
+        int index = originalFilename.lastIndexOf(".");//获取到.的位置
+        String suffix = originalFilename.substring(index);//获取文件的后缀，subString可以返回index到最后的字符（包括index）
+        String randomFileName = UUID.randomUUID().toString().toUpperCase();     //获取到随机文件名
+        //将随机文件名和文件后缀进行拼接
+        String newFileName = suffix + randomFileName;
+        //生成一个空的文件
+        File dest = new File(dir, newFileName);
+        //将参数中获取到的文件写入dest中
+        try {
+            file.transferTo(dest);
+        } catch (IOException e) {
+            throw new FileUpLoadIOException("文件读写时发生异常");
+        }
+        //将文件路径保存到数据库中
+        String avatar = "/upload/"+newFileName;
+        Integer uid = getUidFromSession(session);
+        return null;
     }
 }
