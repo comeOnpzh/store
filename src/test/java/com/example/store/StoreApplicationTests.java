@@ -1,6 +1,8 @@
 package com.example.store;
 
 import com.example.store.entity.User;
+import com.example.store.mapper.AddressMapper;
+import com.example.store.mapper.DistrictMapper;
 import com.example.store.mapper.UserMapper;
 import com.example.store.service.IUserService;
 import org.junit.jupiter.api.Test;
@@ -12,16 +14,15 @@ import javax.sql.DataSource;
 @SpringBootTest
 class StoreApplicationTests {
     @Autowired
-    DataSource dataSource;
+    DistrictMapper districtMapper;
     @Autowired
     private UserMapper userMapper;
     @Autowired
     private IUserService userService;
     @Test
     void contextLoads() throws Exception{
-        String a = "afajfasj";
-        String substring = a.substring(2,4);
-        System.out.println(substring);
+        System.out.println(districtMapper.getNameBycode(110101));
+
     }
 
 }

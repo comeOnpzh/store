@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace要绑定一个对应的dao/Mapper接口，相当于实现这个接口-->
+<mapper namespace="com.example.store.mapper.DistrictMapper">
+    <select id="findByParent" resultType="com.example.store.entity.District">
+        select *
+        from t_dict_district
+        where parent = #{parent};
+    </select>
+    <select id="getNameBycode" resultType="java.lang.String">
+        select t.name
+        from t_dict_district t
+        where code = #{code};
+    </select>
+</mapper>

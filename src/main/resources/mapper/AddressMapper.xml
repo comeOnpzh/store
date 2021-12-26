@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace要绑定一个对应的dao/Mapper接口，相当于实现这个接口-->
+<mapper namespace="com.example.store.mapper.AddressMapper">
+    <resultMap id="addressMap" type="com.example.store.entity.Address">
+        <id column="aid" property="aid"/>
+        <result column="province_name" property="provinceName"/>
+        <result column="province_code" property="provinceCode"/>
+        <result column="city_name" property="cityName"/>
+        <result column="city_code" property="cityCode"/>
+        <result column="area_name" property="areaName"/>
+        <result column="area_code" property="areaCode"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="created_time" property="createdTime"></result>
+        <result column="created_user" property="createdUser"></result>
+        <result column="modified_time" property="modifiedTime"></result>
+        <result column="modified_user" property="modifiedUser"></result>
+    </resultMap>
+
+    <!--查询该用户下所有已保存的收货地址，最多为20条-->
+    <select id="getAddressAccount" resultType="integer">
+        select count(*)
+        from t_address
+        where uid = #{uid};
+    </select>
+
+    <!--插入收货地址-->
+    <insert id="insertAdd" useGeneratedKeys="true" keyProperty="aid">
+        insert into t_address(uid, name, province_name,
+                              province_code, city_name,
+                              city_code, area_name, area_code,
+                              zip, address, phone, tel, tag, is_default,
+                              created_user, created_time, modified_user, modified_time)
+        values (#{uid},
+                #{name},
+                #{provinceName},
+                #{provinceCode},
+                #{cityName},
+                #{cityCode},
+                #{areaName},
+                #{areaCode},
+                #{zip},
+                #{address},
+                #{phone},
+                #{tel},
+                #{tag},
+                #{isDefault},
+                #{createdUser},
+                #{createdTime},
+                #{modifiedUser},
+                #{modifiedTime});
+    </insert>
+    <!--    查询用户的所有收货地址-->
+    <select id="findAllAddress" resultMap="addressMap">
+        select *
+        from t_address
+        where uid = #{uid}
+        order by is_default desc, created_time desc;
+    </select>
+
+    <!--    修改默认地址思路:先将该用户名下所有收货地址都变成非默认，然后再修改需要变成默认的那条-->
+    <update id="updateNonDefault">
+        update t_address
+        set is_default = '0'
+        where uid = #{uid};
+    </update>
+    <update id="updateIsDefault">
+        update t_address
+        set is_default    = '1',
+            modified_user = #{modifiedUser},
+            modified_time = #{modifiedDate}
+        where aid = #{aid};
+    </update>
+
+    <!--    删除一个收货地址-->
+    <delete id="deleteAddress">
+        delete
+        from t_address
+        where aid = #{aid};
+    </delete>
+
+    <!--    通过aid查询收货地址-->
+    <select id="findByAid" resultMap="addressMap">
+        select *
+        from t_address
+        where aid = #{aid};
+    </select>
+
+<!--    修改收货地址-->
+    <update id="changeAddress">
+        update t_address
+            set name=#{name},
+                province_name = #{provinceName},
+                province_code = #{provinceCode},
+                city_name = #{cityName},
+                city_code = #{cityCode},
+                area_name =  #{areaName},
+                area_code = #{areaCode},
+                zip = #{zip},
+                address = #{address},
+                phone = #{phone},
+                tel = #{tel},
+                tag = #{tag},
+                modified_user = #{modifiedUser},
+                modified_time = #{modifiedTime}
+        where aid =#{aid}
+    </update>
+</mapper>
