@@ -3,6 +3,7 @@ package com.example.store;
 import com.example.store.entity.User;
 import com.example.store.mapper.AddressMapper;
 import com.example.store.mapper.DistrictMapper;
+import com.example.store.mapper.ProductMapper;
 import com.example.store.mapper.UserMapper;
 import com.example.store.service.IUserService;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,11 @@ class StoreApplicationTests {
     private UserMapper userMapper;
     @Autowired
     private IUserService userService;
+    @Autowired
+    private ProductMapper productMapper;
     @Test
     void contextLoads() throws Exception{
-        System.out.println(districtMapper.getNameBycode(110101));
+        System.out.println(productMapper.getDetailById(10000001));
 
     }
 

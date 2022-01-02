@@ -60,6 +60,9 @@ public class BaseController {
         }else if(throwable instanceof NoSuchAddressException){
             result.setState(4009);
             result.setMessage("该收货地址不存在！请重新选择");
+        }else if (throwable instanceof NoSuchProductException){
+            result.setState(4010);
+            result.setMessage("商品不存在！请重新选择！");
         }
         return result;
     }
