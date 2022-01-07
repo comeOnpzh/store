@@ -28,9 +28,6 @@ $(function() {
 		}
 		$("#num").val(n - 1);
 	})
-	//点购物车跳页面
-	$(".go-cart").click(function() {
-		location.href = "cart.html";
-	});
+
 	$(".img-big:eq(0)").show();
 })

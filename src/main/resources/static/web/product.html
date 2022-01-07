@@ -315,6 +315,29 @@
 					}
 				});
 			});
+			//加入购物车
+			$('#btn-add-to-cart').click(function () {
+				$.ajax({
+					url:"/cart/add_to_cart",
+					type:"GET",
+					data:"pid="+id+"&price="+$('#product-price').text()+"&num="+$('#num').val(),
+					dataType: "json",
+					success:function (res) {
+						if(res.state==200){
+							alert("成功添加到购物车！");
+						}else{
+							alert("添加失败！");
+						}
+					}
+				});
+			});
+			$.ajaxSetup({complete:function(xhr,status){
+					//若HEADER中含有REDIRECT说明后端想重定向
+					if("REDIRECT" == xhr.getResponseHeader("REDIRECT")){
+						//将后端重定向的地址取出来,使用win.location.href去实现重定向的要求
+						window.location.href = xhr.getResponseHeader("CONTENTPATH");
+					}
+				}});
 		</script>
 	</body>
 

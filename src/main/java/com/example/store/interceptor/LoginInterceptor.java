@@ -15,10 +15,20 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Object uid = request.getSession().getAttribute("uid");
-        if(uid==null){
-            //session对象中没有已经登录的用户信息，用户还没有登录，跳转到登录页面
-            response.sendRedirect("/web/login.html");
-            return false;
+        if (uid == null) {
+            String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+            //如果request.getHeader("X-Requested-With") 返回的是"XMLHttpRequest"说明就是ajax请求，需要特殊处理
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                //告诉ajax我是重定向
+                response.setHeader("REDIRECT", "REDIRECT");
+                //告诉ajax我重定向的路径
+                response.setHeader("CONTENTPATH", basePath + "/web/login.html");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return false;
+            } else {
+                response.sendRedirect("/web/login.html");
+                return false;
+            }
         }
         return true;
     }

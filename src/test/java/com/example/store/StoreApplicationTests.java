@@ -1,10 +1,7 @@
 package com.example.store;
 
 import com.example.store.entity.User;
-import com.example.store.mapper.AddressMapper;
-import com.example.store.mapper.DistrictMapper;
-import com.example.store.mapper.ProductMapper;
-import com.example.store.mapper.UserMapper;
+import com.example.store.mapper.*;
 import com.example.store.service.IUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +19,11 @@ class StoreApplicationTests {
     private IUserService userService;
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private CartMapper cartMapper;
     @Test
     void contextLoads() throws Exception{
-        System.out.println(productMapper.getDetailById(10000001));
+        System.out.println(cartMapper.queryCartInfosByUid(4));
 
     }
 
