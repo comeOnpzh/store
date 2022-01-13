@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace要绑定一个对应的dao/Mapper接口，相当于实现这个接口-->
+<mapper namespace="com.example.store.mapper.OrderMapper">
+    <resultMap id="orderMap" type="com.example.store.entity.Order">
+        <id property="oid" column="oid"></id>
+        <result column="recv_name" property="recvName"/>
+        <result column="recv_phone" property="recvPhone"/>
+        <result column="recv_province" property="recvProvince"/>
+        <result column="recv_city" property="recvCity"/>
+        <result column="recv_area" property="recvArea"/>
+        <result column="recv_address" property="recvAddress"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="status" property="status"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="created_time" property="createdTime"></result>
+        <result column="created_user" property="createdUser"></result>
+        <result column="modified_time" property="modifiedTime"></result>
+        <result column="modified_user" property="modifiedUser"></result>
+    </resultMap>
+    <insert id="createOrder" useGeneratedKeys="true" keyProperty="oid">
+        insert into t_order(uid,recv_name,recv_phone,recv_province,recv_city,recv_area,recv_address,total_price
+        ,status,order_time,pay_time,created_user,created_time,modified_user,modified_time)
+        values (#{uid},#{recvName},#{recvPhone},#{recvProvince},#{recvCity},#{recvArea},#{recvAddress},#{totalPrice}
+        ,#{status},#{orderTime},#{payTime},#{createdUser},#{createdTime},#{modifiedUser},#{modifiedTime});
+    </insert>
+    <select id="getOrderByOid" resultMap="orderMap">
+        select *from t_order
+        where oid = #{oid};
+    </select>
+    <update id="updateOrderStatus">
+        update t_order
+        set status = #{status},pay_time=#{payTime},modified_user = #{modifiedUser},
+            modified_time = #{modifiedTime}
+        where oid = #{oid};
+    </update>
+    <select id="getOid" resultType="java.lang.Integer">
+        select oid from t_order where uid = #{uid};
+    </select>
+</mapper>

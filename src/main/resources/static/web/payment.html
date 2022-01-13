@@ -129,10 +129,10 @@
 								</label>
 							</div>
 						</div>
-						<div>订单号：1101000301，支付金额¥5298，收款方圆心电脑商城</div>
+						<div id="order_info">订单号：1101000301，支付金额¥5298，收款方圆心电脑商城</div>
 						<div class="pay-bar">
 							<a href="cart.html">返回购物车</a>
-							<span class="pull-right">¥5298.00 <input type="button" value="确认付款" class="btn btn-primary btn-lg link-success"/></span>
+							<span class="pull-right">¥5298.00 <input id="btn-pay" type="button" value="确认付款" class="btn btn-primary btn-lg"/></span>
 						</div>
 					</form>
 				</div>
@@ -212,17 +212,49 @@
 						<img src="../images/index/ios.png" class="lf">
 						<img src="../images/index/android.png" alt="" class="lf" />
 					</div>
-					<div class="col-md-6">
-						<img src="../images/index/erweima.png">
-					</div>
 				</div>
 			</div>
 			<!-- 页面底部-备案号 #footer -->
 			<div class="col-md-12 text-center bottom">
-				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="http://www.dnsc.cn/">圆心科技集团有限公司</a> 版权所有
+				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="#"></a> 版权所有
 			</div>
 		</footer>
 		<!--页脚结束-->
+		<script type="text/javascript" src="../js/jquery-getUrlParam.js"></script>
+		<script>
+		$(document).ready(function () {
+			$.ajax({
+				url:"/order/find_by_oid",
+				type:"get",
+				data:location.search.substr(1),
+				dataType:"json",
+				success:function (res) {
+					if (res.state == 200) {
+						$('.pull-right').eq(4).empty();
+						var order = res.data;
+						$('#order_info').html("订单号："+order.oid+"，支付金额  ￥<span style='color: #b92c28;'>" + order.totalPrice + "</span>元，收款方个人电脑商城");
+						console.log($('.pull-right').eq(4));
+						var btn = "<span style='margin-right: 10px'>￥" + order.totalPrice + '</span><input onclick="orderPay(#{oid})" type="button" value="确认付款" class="btn btn-primary btn-lg link-success"/>';
+						btn = btn.replaceAll("#{oid}",order.oid);
+						$('.pull-right').eq(4).append(btn);
+					}
+				}
+			});
+		});
+		function orderPay(oid) {
+			$.ajax({
+				url:"/order/pay",
+				type:"get",
+				data:"oid="+oid,
+				dataType: "json",
+				success:function (res) {
+					if(res.state==200){
+						location.href = "paySuccess.html?oid="+res.data.oid;
+					}
+				}
+			})
+		}
+	</script>
 	</body>
 
 </html>

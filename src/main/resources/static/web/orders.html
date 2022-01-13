@@ -128,7 +128,7 @@
 				</div>
 			</div>
 			<!--左侧导航结束-->
-			<div class="col-md-10">
+			<div class="col-md-10" id="itemDiv">
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<p class="panel-title">
@@ -313,17 +313,90 @@
 						<img src="../images/index/ios.png" class="lf">
 						<img src="../images/index/android.png" alt="" class="lf" />
 					</div>
-					<div class="col-md-6">
-						<img src="../images/index/erweima.png">
-					</div>
 				</div>
 			</div>
 			<!-- 页面底部-备案号 #footer -->
 			<div class="col-md-12 text-center bottom">
-				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="http://www.dnsc.cn/">圆心科技集团有限公司</a> 版权所有
+				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="#"></a> 版权所有
 			</div>
 		</footer>
 		<!--页脚结束-->
+	<script>
+		$(document).ready(function () {
+			$.ajax({
+				url:"/order/all_orders",
+				type:"get",
+				dataType:"json",
+				success:function (res) {
+					if(res.state==200){
+						$('#itemDiv').empty();
+						var data = res.data;    //这是一个map，key是oid，value是详细信息
+						$.each(data,function (i,val) {
+							for(var t=0;t<val.length;t++){
+								if(t==0){
+									var html = '<div class="panel panel-default">\n' +
+											'<div class="panel-heading">\n' +
+											'<p class="panel-title">\n' +
+											'订单号：'+i+'，下单时间：'+val[t].orderTime+' ，收货人：'+val[t].recvName+'\n' +
+											'</p>\n' +
+											'</div>\n' +
+											'<div class="panel-body">\n' +
+											'<table id="orderTable#{oid}" class="orders-table" width="100%">\n' +
+											'<thead>\n' +
+											'<tr>\n' +
+											'<th width="15%"></th>\n' +
+											'<th width="30%">商品</th>\n' +
+											'<th width="8%">单价</th>\n' +
+											'<th width="8%">数量</th>\n' +
+											'<th width="9%">小计</th>\n' +
+											'<th width="10%">售后</th>\n' +
+											'<th width="10%">状态</th>\n' +
+											'<th width="10%">操作</th>\n' +
+											'</tr>\n' +
+											'</thead>\n' +
+											'<tbody class="orders-body">\n' +
+											'<tr>\n' +
+											'<td><img src="..'+val[t].image+'collect.png" class="img-responsive" /></td>\n' +
+											'<td>'+val[t].title+'</td>\n' +
+											'<td>¥<span>'+val[t].price+'</span></td>\n' +
+											'<td>'+val[t].num+'件</td>\n' +
+											'<td>¥<span>'+val[t].num*val[t].price+'</span></td>\n' +
+											'<td><a href="#">申请售后</a></td>\n' +
+											'<td>\n' +
+											'<div>已发货</div>\n' +
+											'<div><a href="orderInfo.html?oid=#{oid}">订单详情</a></div>\n' +
+											'</td>\n' +
+											'<td><a href="#" class="btn btn-default btn-xs">确认收货</a></td>\n' +
+											'</tr>'
+									html = html.replaceAll(/#{oid}/g,i);
+									$('#itemDiv').append(html);
+								}else{
+									var html = '<tr>\n' +
+											'<td><img src="..'+val[t].image+'collect.png" class="img-responsive" /></td>\n' +
+											'<td>'+val[t].title+'</td>\n' +
+											'<td>¥<span>'+val[t].price+'</span></td>\n' +
+											'<td>'+val[t].num+'件</td>\n' +
+											'<td>¥<span>'+val[t].num*val[t].price+'</span></td>\n' +
+											'<td><a href="#">申请售后</a></td>\n' +
+											'<td>\n' +
+											'<div>已发货</div>\n' +
+											'<div><a href="orderInfo.html?oid=#{oid}">订单详情</a></div>\n' +
+											'</td>\n' +
+											'<td><a href="#" class="btn btn-default btn-xs">确认收货</a></td>\n' +
+											'</tr>';
+									html = html.replaceAll(/#{oid}/g,i);
+									$('#orderTable'+i).append(html);
+								}
+							}
+						});
+					}else{
+						alert("加载订单数据失败，请重新加载!");
+						location.href = 'index.html';
+					}
+				}
+			});
+		});
+	</script>
 	</body>
 
 </html>

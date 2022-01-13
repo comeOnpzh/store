@@ -225,17 +225,121 @@
 						<img src="../images/index/ios.png" class="lf">
 						<img src="../images/index/android.png" alt="" class="lf" />
 					</div>
-					<div class="col-md-6">
-						<img src="../images/index/erweima.png">
-					</div>
 				</div>
 			</div>
 			<!-- 页面底部-备案号 #footer -->
 			<div class="col-md-12 text-center bottom">
-				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="http://www.dnsc.cn/">圆心科技集团有限公司</a> 版权所有
+				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="#"></a> 版权所有
 			</div>
 		</footer>
 		<!--页脚结束-->
+	<script>
+		$.ajax({
+			url:"/order/one",
+			type:"get",
+			data:location.search.substr(1),
+			dataType:"json",
+			success:function (res) {
+				if(res.state=200){
+					$('.col-md-10').empty();
+					var order = res.data;
+					var status = order.status == 0?"未支付":order.status ==1?"已支付":order.status ==2?"已取消":order.status ==3?"已关闭":order.status ==4?"已完成":"未知状态";
+					var html =
+							'<h1>订单详情：</h1>\n' +
+							'<h2 class="page-header">状态信息：</h2>\n' +
+							'<div class="state-bar">\n' +
+							'订单号：#{oid} ，当前状态：'+status+'\n' +
+							'</div>\n' +
+							'<ol class="order-flow">\n' +
+							'<li class="order-success">1.提交订单 <small>2018-12-2 20:32:17</small> <span class="fa fa-check-circle"></span></li>\n' +
+							'<li class="order-success">2.付款成功 <small>2018-12-2 20:35:03</small> <span class="fa fa-check-circle"></span></li>\n' +
+							'<li class="order-success">3.商城发货 <small>2018-12-3 08:13:34</small> <span class="fa fa-check-circle"></span></li>\n' +
+							'<li>4.用户收货</li>\n' +
+							'<li>5.购物评价</li>\n' +
+							'</ol>\n' +
+							'<h2 class="page-header">地址详情：</h2>\n' +
+							'<p>收货人姓名：#{recvName}，邮政编码：100190，联系电话： #{recvPhone}</p>\n' +
+							'<p>收货地址：#{recvProvince}#{recvCity}#{recvArea}#{recvAddress}</p>\n' +
+							'<h2 class="page-header">物流信息：</h2>\n' +
+							'<p>发货时间：2018-12-3 08:13:34</p>\n' +
+							'<p>物流公司：顺丰快递</p>\n' +
+							'<p>快递单号：301111303203048</p>\n' +
+							'<p>物流信息：</p>\n' +
+							'<p>2018-12-3 08:13:34 您的快递在【北京国贸分拣中心】分拣完毕</p>\n' +
+							'<p>2018-12-3 08:39:50 您的快递在【北京国贸分拣中心】准备装车</p>\n' +
+							'<p>2018-12-3 12:20:07 您的快递到达【北京中关村分拣中心】</p>\n'+
+							'<h2 class="page-header">商品详情：</h2>\n' +
+							'<div class="panel panel-default">\n' +
+							'<div class="panel-heading">\n' +
+							'<h3 class="panel-title">\n' +
+							'               订单号：#{oid}，下单时间：#{orderTime} ， 收货人：八戒\n' +
+							'            </h3>\n' +
+							'</div>\n' +
+							'<div class="panel-body">\n' +
+							'<table  class="orders-table">\n' +
+							'<thead>\n' +
+							'<tr>\n' +
+							'<th width="15%"></th>\n' +
+							'<th width="35%">商品</th>\n' +
+							'<th width="15%">单价</th>\n' +
+							'<th width="15%">数量</th>\n' +
+							'<th width="20%">小计</th>\n' +
+							'</tr>\n' +
+							'</thead>\n'+
+							'<tbody id="itemTableBody" class="orders-body">\n' +
+							'<tr>\n' +
+							'</tr>\n' +
+							'</tbody>\n' +
+							'</table>\n' +
+							'<div>\n' +
+							'<span id="total" class="pull-right">订单总金额：¥#{totalPrice}</span>\n' +
+							'</div>\n' +
+							'</div>\n' +
+							'</div>\n' +
+							'<a href="orders.html">返回</a>'
+					html = html.replaceAll("#{oid}",order.oid);
+					html = html.replaceAll("#{recvName}",order.recvName);
+					html = html.replaceAll("#{recvProvince}",order.recvProvince);
+					html = html.replaceAll("#{recvCity}",order.recvCity);
+					html = html.replaceAll("#{recvCity}",order.recvCity);
+					html = html.replaceAll("#{recvArea}",order.recvArea);
+					html = html.replaceAll("#{recvAddress}",order.recvAddress);
+					html = html.replaceAll("#{totalPrice}",order.totalPrice);
+					html = html.replaceAll("#{orderTime}",order.orderTime);
+					html = html.replaceAll("#{recvPhone}",order.recvPhone);
+
+					$('.col-md-10').append(html);
+				}
+			}
+		});
+		$.ajax({
+			url:"/order/item",
+			type:"get",
+			data:location.search.substr(1),
+			dataType:"json",
+			success:function (res) {
+				if (res.state = 200) {
+					$('#itemTableBody').empty();
+					let list = res.data;
+					for(var i=0;i<list.length;i++){
+						var html ='<tr>\n' +
+								'<td><img src="..#{image}collect.png" class="img-responsive" /></td>\n' +
+								'<td>#{title}</td>\n' +
+								'<td>¥<span>#{price}</span></td>\n' +
+								'<td>#{num}件</td>\n' +
+								'<td>¥<span>#{totalPrice}</span></td>\n' +
+								'</tr>';
+						html = html.replaceAll("#{image}",list[i].image);
+						html = html.replaceAll("#{title}",list[i].title);
+						html = html.replaceAll("#{price}",list[i].price);
+						html = html.replaceAll("#{num}",list[i].num);
+						html = html.replaceAll("#{totalPrice}",list[i].num*list[i].price);
+						$('#itemTableBody').append(html);
+					}
+				}
+			}
+		});
+	</script>
 	</body>
 
 </html>

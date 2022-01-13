@@ -303,10 +303,11 @@
 							$('#address-list').empty();
 							var addressList = res.data;
 							for(var i=0;i<addressList.length;i++){
-								var option = '<option>#{name}&nbsp;&nbsp;&nbsp;#{tag}&nbsp;&nbsp;&nbsp;#{address}&nbsp;&nbsp;&nbsp;#{phone}</option>'
+								var option = '<option value="#{aid}">#{name}&nbsp;&nbsp;&nbsp;#{tag}&nbsp;&nbsp;&nbsp;#{address}&nbsp;&nbsp;&nbsp;#{phone}</option>'
 								option = option.replaceAll(/#{address}/g,addressList[i].address);
 								option = option.replaceAll(/#{phone}/g,addressList[i].phone);
 								option = option.replaceAll(/#{name}/g,addressList[i].name);
+								option = option.replaceAll(/#{aid}/g,addressList[i].aid);
 								option = option.replaceAll(/#{tag}/g,addressList[i].tag);
 								$('#address-list').append(option);
 							}
@@ -314,6 +315,27 @@
 					}
 				});
 			}
+			//生成订单
+			$('#btn-create-order').click(function () {
+				var aid = $('#address-list option:selected').val();
+				var param = "";
+				param += "aid=" + aid;
+				for (var i = 0; i < $('#cart-list').find("tr").length; i++) {
+					param += "&cids=" + $('#cart-list').find("tr").eq(i).find("td").find("input").val();
+				}
+				$.ajax({
+					url:"/order/create",
+					type:"post",
+					data:param,
+					success:function (res) {
+						if(res.state==200){
+							//跳转到订单页面
+							alert("订单创建成功！");
+							location.href = 'payment.html?oid='+res.data.oid;
+						}
+					}
+				});
+			});
 		</script>
 	</body>
 

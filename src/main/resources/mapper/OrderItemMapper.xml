@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace要绑定一个对应的dao/Mapper接口，相当于实现这个接口-->
+<mapper namespace="com.example.store.mapper.OrderItemMapper">
+    <resultMap id="orderMap" type="com.example.store.entity.OrderItem">
+        <id property="id" column="id"></id>
+        <result column="created_time" property="createdTime"></result>
+        <result column="created_user" property="createdUser"></result>
+        <result column="modified_time" property="modifiedTime"></result>
+        <result column="modified_user" property="modifiedUser"></result>
+    </resultMap>
+    <insert id="insertOrderItem" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="">
+        insert into t_order_item(oid,pid,num,image,title,price
+        ,created_user,created_time,modified_user,modified_time)
+        values 
+        <foreach collection="list" item="item" separator="," close=";">
+           (#{item.oid},#{item.pid},#{item.num},#{item.image},#{item.title},#{item.price}
+           ,#{item.createdUser},#{item.createdTime},#{item.modifiedUser},#{item.modifiedTime})
+        </foreach>
+
+    </insert>
+
+    <select id="getItemByOid" resultType="com.example.store.vo.OrderVO">
+        select o.oid,o.uid,o.recv_name as recvName,o.recv_phone as recvPhone,o.recv_province as recvProvince,o.recv_city as recvCity,o.recv_area as recvArea ,o.recv_address as recvAddress,
+               o.total_price as totalPrice,o.status,o.order_time as orderTime,o.pay_time as payTime,i.id,i.pid,i.title,i.image,i.price,i.num from t_order o left join t_order_item i on o.oid = i.oid where i.oid = #{oid};
+    </select>
+</mapper>
